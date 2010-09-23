@@ -3,7 +3,7 @@ import string
 from Shared import *
 import HtmlPost
 
-jar_path = os.path.join(os.path.dirname(__file__), 'compiler-20100917.jar')
+jar_path = os.path.join(os.path.dirname(__file__), 'compiler-20100616.jar')
 
 def make_deps_core(closure_path, deps_js_path, js_dirs):
   
@@ -36,17 +36,17 @@ class Closure:
   def do_makeDeps(self):
     run_command(self.make_deps)
   
-  def do_compile(self):
+  def do_compile(self, debug = False):
+    self.debug = debug
     run_command(self.compile)
   
-  def deps_and_compile(self):
+  def deps_and_compile(self, debug = False):
     self.do_makeDeps()
-    self.do_compile()
+    self.do_compile(debug)
   
   def build_and_process(self, source_html, target_html, debug = False, skip_build = False):
-    self.debug = debug
     if(not skip_build):
-      self.deps_and_compile()
+      self.deps_and_compile(debug)
     
     source_js_files = [os.path.join(self.googPath(), 'base.js')]
     source_js_files += [self.application_js_path, self.deps_js_path]
