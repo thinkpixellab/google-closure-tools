@@ -31,7 +31,7 @@ class Closure:
     self.debug = False
   
   def googPath(self):
-    return os.path.join(self.closure_path, 'closure', 'goog')
+    return os.path.join(self.closure_path, 'goog')
   
   def do_makeDeps(self):
     run_command(self.make_deps)
@@ -86,7 +86,7 @@ def get_closure_inputs(goog_path, js_files, extern_files):
   return command_inputs
 
 def get_js_files_for_compile(closure_path, app_file, app_dep_file):
-  goog_path = os.path.join(closure_path,'closure','goog')
+  goog_path = os.path.join(closure_path,'goog')
   dep_files = [app_dep_file]
   dep_files.append(os.path.join(goog_path,'deps.js'))
   
