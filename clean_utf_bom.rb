@@ -1,13 +1,19 @@
 UTF8_BOM_REGEX = /\A\xEF\xBB\xBF/.freeze
 
 def process_file(file_name)
+  file_contents = needs_clean = nil
   File.open(file_name) do |file|
-    value = file.read
-    cool = value.gsub!(UTF8_BOM_REGEX,'')
-    if(cool)
-      puts file_name
+    file_contents = file.read
+    needs_clean = file_contents.gsub!(UTF8_BOM_REGEX,'')
+  end
+  
+  if(needs_clean)
+    puts file_name
+    File.open(file_name, 'w') do |file|
+      file.write(file_contents)
     end
   end
+  
 
 end
 
