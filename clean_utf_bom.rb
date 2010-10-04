@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 UTF8_BOM_REGEX = /\A\xEF\xBB\xBF/.freeze
 
 def process_file(file_name)
@@ -13,8 +14,6 @@ def process_file(file_name)
       file.write(file_contents)
     end
   end
-  
-
 end
 
 source_files_pattern = File.join('..', 'public','**', '*.js')
