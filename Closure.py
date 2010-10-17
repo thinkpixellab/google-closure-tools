@@ -34,11 +34,11 @@ class Closure:
     return os.path.join(self.closure_path, 'goog')
   
   def do_makeDeps(self):
-    run_command(self.make_deps)
+    run_process_file_command(self.make_deps)
   
   def do_compile(self, debug = False):
     self.debug = debug
-    run_command(self.compile)
+    run_process_file_command(self.compile)
   
   def deps_and_compile(self, debug = False):
     self.do_makeDeps()

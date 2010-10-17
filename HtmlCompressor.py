@@ -50,7 +50,7 @@ class CssCompressor:
     concat(self.sources, self.target)
     
     #compress
-    run_command(self.get_compress_args)
+    run_process_file_command(self.get_compress_args)
   
   def get_compress_args(self):
     args = yui_compressor_args[:]
@@ -120,7 +120,7 @@ class HtmlCompressor:
       file.writelines(contents)
     
     # compress html
-    run_command(self.get_compress_args)
+    run_process_file_command(self.get_compress_args)
     HtmlPost.ensureHtmlElementsFromFile(self.target)
     remove_if_exists(self._tmp)
   

@@ -23,7 +23,6 @@ def get_tmp_file_name(source_file_name):
     os.mkdir(tmp_dir)
   return os.path.join(tmp_dir, name)
 
-def run_command(command_func):
   logging.basicConfig(format='%(message)s', level=logging.INFO)
   args, tmp_file, out_file = command_func()
   logging.info('Running the following command: %s', ' '.join(args))
