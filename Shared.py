@@ -23,10 +23,13 @@ def get_tmp_file_name(source_file_name):
     os.mkdir(tmp_dir)
   return os.path.join(tmp_dir, name)
 
-  logging.basicConfig(format='%(message)s', level=logging.INFO)
+def run_process_file_command(command_func):
+  logging.basicConfig(format=' * %(message)s', level=logging.INFO)
   args, tmp_file, out_file = command_func()
-  logging.info('Running the following command: %s', ' '.join(args))
+  logging.info('* * * * *')
+  logging.info('Requested command: %s', ' '.join(args))
   proc = subprocess.Popen(args, stdout=subprocess.PIPE)
+  logging.info('Running...')
   (stdoutdata, stderrdata) = proc.communicate()
   if proc.returncode != 0:
     logging.error('Command failed.')
