@@ -3,7 +3,7 @@ import string
 from Shared import *
 import HtmlPost
 
-jar_path = os.path.join(os.path.dirname(__file__), 'compiler-svn483.jar')
+jar_path = os.path.join(os.path.dirname(__file__), 'compiler-svn495.jar')
 
 def make_deps_core(closure_path, deps_js_path, js_dirs):
   
