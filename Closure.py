@@ -1,9 +1,12 @@
 import os
 import string
+import glob
 from Shared import *
 import HtmlPost
 
 jar_path = os.path.join(os.path.dirname(__file__), 'compiler-svn495.jar')
+
+tmp_dir = 'tmp'
 
 def make_deps_core(closure_path, deps_js_path, js_dirs):
   
@@ -124,16 +127,28 @@ def compile_core(goog_path, js_files, extern_files, compiled_js_path, debug=Fals
   command += ["--compilation_level", "ADVANCED_OPTIMIZATIONS"] # SIMPLE_OPTIMIZATIONS
   command += ["--summary_detail_level", "3"]
   command += ["--warning_level", "VERBOSE"]
+  command += ['--create_name_map_files']
   # make sure everything is in a good order
   # ...but make compiling take 2x more time :-/
   # command += ["--jscomp_dev_mode", "EVERY_PASS"]
+
+  # property map
+  propMapFiles = glob.glob(os.path.join(tmp_dir, '*_props_map.out'))
+  if(len(propMapFiles) > 0):
+    command += ['--property_map_input_file', propMapFiles[-1]]
+
+  # vars map
+  varMapFiles = glob.glob(os.path.join(tmp_dir, '*_vars_map.out'))
+  if(len(varMapFiles) > 0):
+    command += ['--variable_map_input_file', varMapFiles[-1]]
+
   if(debug):
     # debug makes var names readable, but was causing weirdness..
     command += ["--debug", "true"]
     command += ["--formatting", "PRETTY_PRINT"]
     command += ["--formatting", "PRINT_INPUT_DELIMITER"]
   
-  tmp_file_path = get_tmp_file_name(compiled_js_path)
+  tmp_file_path = get_tmp_file_name(compiled_js_path, tmp_dir)
   command += ["--js_output_file", tmp_file_path]
   return command, tmp_file_path, compiled_js_path
 
