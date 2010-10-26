@@ -125,8 +125,8 @@ def compile_core(goog_path, js_files, extern_files, compiled_js_path, debug=Fals
   command += ["--summary_detail_level", "3"]
   command += ["--warning_level", "VERBOSE"]
   # make sure everything is in a good order
-  command += ["--jscomp_dev_mode", "EVERY_PASS"]
-  
+  # ...but make compiling take 2x more time :-/
+  # command += ["--jscomp_dev_mode", "EVERY_PASS"]
   if(debug):
     # debug makes var names readable, but was causing weirdness..
     command += ["--debug", "true"]
