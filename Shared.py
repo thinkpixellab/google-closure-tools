@@ -5,6 +5,8 @@ import subprocess
 import datetime
 import fnmatch
 
+_default_tmp_dir = 'tmp'
+
 def writeXmlSansInstructions(dom, file):
   with open(file, "w") as fp:
     for node in dom.childNodes:
@@ -14,11 +16,10 @@ def remove_if_exists(path):
   if os.path.exists(path):
     os.remove(path)
 
-def get_tmp_file_name(source_file_name):
+def get_tmp_file_name(source_file_name, tmp_dir = _default_tmp_dir):
   name = os.path.basename(source_file_name)
   safe_now = datetime.datetime.utcnow().isoformat().replace(':','_')
   name = "{0}_{1}".format(safe_now, name)
-  tmp_dir = 'tmp'
   if os.path.exists(tmp_dir) != True:
     os.mkdir(tmp_dir)
   return os.path.join(tmp_dir, name)
