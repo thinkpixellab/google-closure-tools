@@ -186,7 +186,7 @@ def populate_files(js_file, files_array, provide_to_file_hash, file_to_require_h
     # figure out which files provide these symbols
     for symbol in required_symbols:
       if(not symbol in provide_to_file_hash):
-        raise Exception("Don't know where the symbol '%s' is!" % symbol)
+        raise Exception("Don't know where the symbol '%s' is for file '%s'!" % (symbol, js_file))
       next_file = provide_to_file_hash[symbol]
       populate_files(next_file, files_array, provide_to_file_hash, file_to_require_hash)
 
