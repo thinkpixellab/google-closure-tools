@@ -128,6 +128,7 @@ def compile_core(goog_path, js_files, extern_files, compiled_js_path, debug=Fals
   command += ["--summary_detail_level", "3"]
   command += ["--warning_level", "VERBOSE"]
   command += ['--create_name_map_files']
+  command += ['--jscomp_warning=checkTypes']
   # make sure everything is in a good order
   # ...but make compiling take 2x more time :-/
   # command += ["--jscomp_dev_mode", "EVERY_PASS"]
