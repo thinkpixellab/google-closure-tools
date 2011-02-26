@@ -65,8 +65,6 @@ def replaceJsFiles(source_html_file, target_html_file, compiled_js_file, source_
   
   compiledElement = dom.createElement('script')
   compiledElement.setAttribute('src', compiled_js_file)
-  # needed to ensure xml output writes both open/close tags
-  compiledElement.appendChild(dom.createTextNode(''))
   
   head = dom.getElementsByTagName('head')[0]
   head.appendChild(compiledElement)
@@ -96,7 +94,7 @@ def ensureHtmlElementsFromFile(path):
 
 def ensureHtmlElementsFromDom(dom):
   # now go through all 'important' tags and ensure they are not empty
-  for element_name in ['canvas', 'script', 'div', 'a']:
+  for element_name in ['canvas', 'script', 'div', 'a', 'textarea', 'span']:
     for element in dom.getElementsByTagName(element_name):
       element.appendChild(dom.createTextNode(''))
   
