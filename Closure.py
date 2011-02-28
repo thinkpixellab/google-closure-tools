@@ -24,11 +24,12 @@ def make_deps_core(closure_path, deps_js_path, js_dirs):
   return command, tmp_file_path, deps_js_path
 
 class Closure:
-  def __init__(self, closure_path, application_js_path, closure_dependencies, deps_js_path, compiled_js_path, extern_files):
+  def __init__(self, closure_path, application_js_path, root_symbol, closure_dependencies, deps_js_path, compiled_js_path, extern_files):
     self.closure_path = closure_path
     self.deps_js_path = deps_js_path
     self.closure_dependencies = closure_dependencies
     self.application_js_path = application_js_path
+    self.root_symbol = root_symbol
     self.extern_files = extern_files
     self.compiled_js_path = compiled_js_path
     self.debug = False
@@ -52,20 +53,21 @@ class Closure:
       self.deps_and_compile(debug)
     
     source_js_files = [os.path.join(self.googPath(), 'base.js')]
-    source_js_files += [self.application_js_path, self.deps_js_path]
+    if(self.application_js_path):
+      source_js_files += [self.application_js_path, self.deps_js_path]
     HtmlPost.replaceJsFiles(source_html, target_html, self.compiled_js_path, source_js_files)
   
   def make_deps(self):
     return make_deps_core(self.closure_path, self.deps_js_path, self.closure_dependencies)
   
   def get_compile_files(self):
-    js_files = get_js_files_for_compile(self.closure_path, self.application_js_path, self.deps_js_path)
+    js_files = get_js_files_for_compile(self.closure_path, self.application_js_path, self.root_symbol, self.deps_js_path)
     
     return js_files
   
   def compile(self):
     js_files = self.get_compile_files()
-    return compile_core(self.googPath(), js_files, self.extern_files, self.compiled_js_path, self.debug)
+    return compile_core(self.googPath(), js_files, self.extern_files, self.compiled_js_path, self.root_symbol, self.debug)
   
   # def print_tree(self):
   #   js_files, extern_files = self.get_compile_files()
@@ -88,7 +90,7 @@ def get_closure_inputs(goog_path, js_files, extern_files):
   command_inputs += ["--manage_closure_dependencies", "true"]
   return command_inputs
 
-def get_js_files_for_compile(closure_path, app_file, app_dep_file):
+def get_js_files_for_compile(closure_path, app_file, root_symbol, app_dep_file):
   goog_path = os.path.join(closure_path,'goog')
   dep_files = [app_dep_file]
   dep_files.append(os.path.join(goog_path,'deps.js'))
@@ -98,9 +100,13 @@ def get_js_files_for_compile(closure_path, app_file, app_dep_file):
   
   for dep_file in dep_files:
     process_deps(goog_path, dep_file, provide_to_file_hash, file_to_require_hash)
-  
+
   files = []
-  populate_files(app_file, files, provide_to_file_hash, file_to_require_hash)
+
+  if(app_file):
+    populate_required_files_for_file(app_file, files, provide_to_file_hash, file_to_require_hash)
+  else:
+    populate_required_files_for_symbol(root_symbol, files, provide_to_file_hash, file_to_require_hash)
   
   # ugly exception ->
   exception_files = [os.path.join(goog_path, 'events', 'eventhandler.js'), os.path.join(goog_path, 'events', 'eventtarget.js'), os.path.join(goog_path, 'debug', 'errorhandler.js')]
@@ -121,8 +127,11 @@ def get_goog_js_files():
 def get_command_with_inputs(goog_path, js_files, extern_files):
   return get_closure_base() + get_closure_inputs(goog_path, js_files, extern_files)
 
-def compile_core(goog_path, js_files, extern_files, compiled_js_path, debug=False):
+def compile_core(goog_path, js_files, extern_files, compiled_js_path, closure_entry_point = None, debug=False):
   command = get_command_with_inputs(goog_path, js_files, extern_files)
+
+  if(closure_entry_point):
+    command += ['--closure_entry_point', closure_entry_point]
   
   command += ["--compilation_level", "ADVANCED_OPTIMIZATIONS"] # SIMPLE_OPTIMIZATIONS
   command += ["--summary_detail_level", "3"]
@@ -176,7 +185,7 @@ def process_deps(goog_path, dep_file, provide_to_file_hash, file_to_require_hash
   for line in open(dep_file,"r").readlines():
     process_line(goog_path, line, provide_to_file_hash, file_to_require_hash)
 
-def populate_files(js_file, files_array, provide_to_file_hash, file_to_require_hash):
+def populate_required_files_for_file(js_file, files_array, provide_to_file_hash, file_to_require_hash):
   if(not js_file in files_array):
     # append the provided file, since we don't have it
     files_array.append(js_file)
@@ -186,10 +195,13 @@ def populate_files(js_file, files_array, provide_to_file_hash, file_to_require_h
     required_symbols = file_to_require_hash[js_file]
     # figure out which files provide these symbols
     for symbol in required_symbols:
-      if(not symbol in provide_to_file_hash):
-        raise Exception("Don't know where the symbol '%s' is for file '%s'!" % (symbol, js_file))
-      next_file = provide_to_file_hash[symbol]
-      populate_files(next_file, files_array, provide_to_file_hash, file_to_require_hash)
+      populate_required_files_for_symbol(symbol, files_array, provide_to_file_hash, file_to_require_hash)
+
+def populate_required_files_for_symbol(symbol, files_array, provide_to_file_hash, file_to_require_hash):
+  if(not symbol in provide_to_file_hash):
+    raise Exception("Don't know where the symbol '%s' is!" % symbol)
+  next_file = provide_to_file_hash[symbol]
+  populate_required_files_for_file(next_file, files_array, provide_to_file_hash, file_to_require_hash)
 
 # def print_help():
 #   command = get_closure_base()
