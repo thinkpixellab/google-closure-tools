@@ -87,14 +87,3 @@ def process_script_element(element, source_js_files = None):
       for element in toRemove:
         element.parentNode.removeChild(element)
 
-def ensureHtmlElementsFromFile(path):
-  dom = minidom.parse(path)
-  ensureHtmlElementsFromDom(dom)
-  writeXmlSansInstructions(dom, path)
-
-def ensureHtmlElementsFromDom(dom):
-  # now go through all 'important' tags and ensure they are not empty
-  for element_name in ['canvas', 'script', 'div', 'a', 'textarea', 'span']:
-    for element in dom.getElementsByTagName(element_name):
-      element.appendChild(dom.createTextNode(''))
-  

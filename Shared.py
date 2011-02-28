@@ -7,6 +7,17 @@ import fnmatch
 
 _default_tmp_dir = 'tmp'
 
+def ensureHtmlElementsFromFile(path):
+  dom = minidom.parse(path)
+  ensureHtmlElementsFromDom(dom)
+  writeXmlSansInstructions(dom, path)
+
+def ensureHtmlElementsFromDom(dom):
+  # now go through all 'important' tags and ensure they are not empty
+  for element_name in ['canvas', 'script', 'div', 'a', 'textarea', 'span']:
+    for element in dom.getElementsByTagName(element_name):
+      element.appendChild(dom.createTextNode(''))
+
 def writeXmlSansInstructions(dom, file):
   with open(file, "w") as fp:
     for node in dom.childNodes:
