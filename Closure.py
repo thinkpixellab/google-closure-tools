@@ -133,21 +133,21 @@ def compile_core(goog_path, js_files, extern_files, compiled_js_path, debug=Fals
   # ...but make compiling take 2x more time :-/
   # command += ["--jscomp_dev_mode", "EVERY_PASS"]
 
-  # property map
-  propMapFiles = glob.glob(os.path.join(tmp_dir, '*_props_map.out'))
-  if(len(propMapFiles) > 0):
-    command += ['--property_map_input_file', propMapFiles[-1]]
-
-  # vars map
-  varMapFiles = glob.glob(os.path.join(tmp_dir, '*_vars_map.out'))
-  if(len(varMapFiles) > 0):
-    command += ['--variable_map_input_file', varMapFiles[-1]]
-
   if(debug):
     # debug makes var names readable, but was causing weirdness..
     command += ["--debug", "true"]
     command += ["--formatting", "PRETTY_PRINT"]
     command += ["--formatting", "PRINT_INPUT_DELIMITER"]
+  else:
+    # property map
+    propMapFiles = glob.glob(os.path.join(tmp_dir, '*_props_map.out'))
+    if(len(propMapFiles) > 0):
+      command += ['--property_map_input_file', propMapFiles[-1]]
+
+    # vars map
+    varMapFiles = glob.glob(os.path.join(tmp_dir, '*_vars_map.out'))
+    if(len(varMapFiles) > 0):
+      command += ['--variable_map_input_file', varMapFiles[-1]]
   
   tmp_file_path = get_tmp_file_name(compiled_js_path, tmp_dir)
   command += ["--js_output_file", tmp_file_path]
