@@ -53,8 +53,10 @@ class Closure:
       self.deps_and_compile(debug)
     
     source_js_files = [os.path.join(self.googPath(), 'base.js')]
+    source_js_files += [self.deps_js_path]
+
     if(self.application_js_path):
-      source_js_files += [self.application_js_path, self.deps_js_path]
+      source_js_files += [self.application_js_path]
     HtmlPost.replaceJsFiles(source_html, target_html, self.compiled_js_path, source_js_files)
   
   def make_deps(self):
