@@ -4,7 +4,7 @@ import glob
 from Shared import *
 import HtmlPost
 
-jar_path = os.path.join(os.path.dirname(__file__), 'compiler-svn824.jar')
+jar_path = os.path.join(os.path.dirname(__file__), 'compiler-svn838.jar')
 
 tmp_dir = 'tmp'
 
